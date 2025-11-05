@@ -1,14 +1,16 @@
-﻿namespace GraphLibrary
+﻿using GraphLibrary.Interfaces;
+
+namespace GraphLibrary.Structs
 {
-    public struct Graph<T> : IEquatable<Graph<T>> where T : notnull
+    public struct Graph<T> : IGraph<T>, IEquatable<IGraph<T>>, IEquatable<Graph<T>> where T : notnull
     {
         public HashSet<T> Vertices { get; private set; }
-        public HashSet<Edge<T>> Edges { get; private set; }
+        public HashSet<IEdge<T>> Edges { get; private set; }
 
         public Graph()
         {
             Vertices = new HashSet<T>();
-            Edges = new HashSet<Edge<T>>();
+            Edges = new HashSet<IEdge<T>>();
         }
 
         public Graph(Graph<T> graph)
@@ -31,8 +33,12 @@
             }
         }
 
-        public void AddEdge(Edge<T> edge)
+        public void AddEdge(IEdge<T> edge)
         {
+            if (edge is not Edge<T>)
+            {
+                throw new ArgumentException("Edge must be of type Edge<T>");
+            }
             Edges.Add(edge);
             Vertices.Add(edge.Vertex1);
             Vertices.Add(edge.Vertex2);
@@ -47,25 +53,23 @@
         }
 
 
-        public void AddEdges(IEnumerable<Edge<T>> edges)
+        public void AddEdges(IEnumerable<IEdge<T>> edges)
         {
             foreach (var edge in edges)
             {
-                Edges.Add(edge);
-                Vertices.Add(edge.Vertex1);
-                Vertices.Add(edge.Vertex2);
+                AddEdge(edge);
             }
         }
 
-        public void AddGraph(Graph<T> graph)
+        public void AddGraph(IGraph<T> graph)
         {
-            this.AddVertices(graph.Vertices);
-            this.AddEdges(graph.Edges);
+            AddVertices(graph.Vertices);
+            AddEdges(graph.Edges);
         }
 
         public void ConnectGraph(Graph<T> graph, T vertex1, T vertext2)
         {
-            if (!this.ContainsVertex(vertex1) && !this.ContainsVertex(vertext2))
+            if (!ContainsVertex(vertex1) && !ContainsVertex(vertext2))
             {
                 throw new ArgumentException("One Vertex must be present in the existing graph to connect graphs.");
             }
@@ -74,8 +78,8 @@
                 throw new ArgumentException("One Vertex must be present in the new graph to connect graphs.");
             }
 
-            this.AddGraph(graph);
-            this.AddEdge(vertex1, vertext2);
+            AddGraph(graph);
+            AddEdge(vertex1, vertext2);
         }
 
         public void RemoveEdge(T vertex1, T vertex2)
@@ -84,7 +88,7 @@
             Edges.Remove(edge);
         }
 
-        public void RemoveEdge(Edge<T> edge)
+        public void RemoveEdge(IEdge<T> edge)
         {
             Edges.Remove(edge);
         }
@@ -102,7 +106,7 @@
                 RemoveVertex(vertex);
             }
         }
-        public void RemoveEdges(IEnumerable<Edge<T>> edges)
+        public void RemoveEdges(IEnumerable<IEdge<T>> edges)
         {
             foreach (var edge in edges)
             {
@@ -122,7 +126,7 @@
             Edges.Clear();
         }
 
-        public IEnumerable<Edge<T>> GetIncidentEdges(T vertex)
+        public IEnumerable<IEdge<T>> GetIncidentEdges(T vertex)
         {
             return Edges.Where(e => e.Contains(vertex)).AsEnumerable();
         }
@@ -174,11 +178,11 @@
             var edge = new Edge<T>(vertex1, vertex2);
             return Edges.Contains(edge);
         }
-        public bool ContainsEdge(Edge<T> edge)
+        public bool ContainsEdge(IEdge<T> edge)
         {
             return Edges.Contains(edge);
         }
-        public bool Contains(Edge<T> edge)
+        public bool Contains(IEdge<T> edge)
         {
             return ContainsEdge(edge);
         }
@@ -186,22 +190,22 @@
         {
             return ContainsVertex(vertex);
         }
-        public bool Contains(Graph<T> graph)
+        public bool Contains(IGraph<T> graph)
         {
             return ContainsGraph(graph);
         }
 
-        public bool IsSubGraphOf(Graph<T> graph)
+        public bool IsSubGraphOf(IGraph<T> graph)
         {
             return Vertices.IsSubsetOf(graph.Vertices) && Edges.IsSubsetOf(graph.Edges);
         }
 
-        public bool IsSuperGraphOf(Graph<T> graph)
+        public bool IsSuperGraphOf(IGraph<T> graph)
         {
             return Vertices.IsSupersetOf(graph.Vertices) && Edges.IsSupersetOf(graph.Edges);
         }
 
-        public bool ContainsGraph(Graph<T> graph)
+        public bool ContainsGraph(IGraph<T> graph)
         {
             return IsSuperGraphOf(graph);
         }
@@ -217,7 +221,7 @@
         }
 
         public bool Equals(Graph<T> other) => Vertices.SetEquals(other.Vertices) && Edges.SetEquals(other.Edges);
-
+        public bool Equals(IGraph<T>? other) => other is Graph<T> && Equals((Graph<T>)other);
         public override bool Equals(object? obj) => obj is Graph<T> other && Equals(other);
 
 
@@ -225,11 +229,11 @@
          * 
          * I found it on Wikipedia: https://en.wikipedia.org/wiki/Bron-Kerbosch_algorithm
          * 
-         *  algorithm BronKerbosch1(R, P, X) is
+         *  algorithm BronKerbosch2(R, P, X) is
          *      if P and X are both empty then
          *          report R as a maximal clique
          *      for each vertex v in P do
-         *          BronKerbosch1(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
+         *          BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
          *          P := P \ {v}
          *          X := X ⋃ {v}
          */
@@ -240,7 +244,7 @@
             {
                 cliques.Add(R.ToHashSet());
             }
-            foreach (var v in P.ToList())
+            foreach (var v in P)
             {
                 var vSet = new HashSet<T> { v };
                 var neighbors = GetNeighbors(v).ToHashSet();
@@ -254,7 +258,7 @@
         public IEnumerable<HashSet<T>> GetCliques()
         {
             var cliques = new List<HashSet<T>>();
-            BronKerbosch(new HashSet<T>(), this.Vertices, new HashSet<T>(), ref cliques);
+            BronKerbosch(new HashSet<T>(), Vertices, new HashSet<T>(), ref cliques);
             return cliques;
         }
 

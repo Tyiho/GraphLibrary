@@ -1,4 +1,5 @@
-﻿using GraphLibrary;
+﻿using GraphLibrary.Interfaces;
+using GraphLibrary.Structs;
 using System.Diagnostics;
 
 namespace GraphLibraryUnitTest
@@ -68,7 +69,8 @@ namespace GraphLibraryUnitTest
                 new DirectionalEdge<object>(2, 3),
                 new DirectionalEdge<object>(3, 1)
             };
-            graph.AddEdges(edgesToAdd);
+            List<IEdge<object>> edgesToAdd1 = edgesToAdd.Cast<IEdge<object>>().ToList();
+            graph.AddEdges(edgesToAdd1);
             Assert.AreEqual(3, graph.Edges.Count);
             foreach (var edge in edgesToAdd)
             {
@@ -303,7 +305,8 @@ namespace GraphLibraryUnitTest
                 new DirectionalEdge<object>(1, 2),
                 new DirectionalEdge<object>(2, 3)
             };
-            graph.RemoveEdges(edgesToRemove);
+            List<IEdge<object>> edgesToRemove1 = edgesToRemove.Cast<IEdge<object>>().ToList();
+            graph.RemoveEdges(edgesToRemove1);
             Assert.IsFalse(graph.ContainsEdge(1, 2));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
             Assert.IsTrue(graph.ContainsEdge(3, 4));
@@ -431,95 +434,9 @@ namespace GraphLibraryUnitTest
             graph.AddEdge(1, 3);
             graph.AddEdge(2, 3);
             var incidentEdgesOf1 = graph.GetIncidentEdges(1).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<DirectionalEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(1, 3) }));
+            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(1, 3) }));
             var incidentEdgesOf2 = graph.GetIncidentEdges(2).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<DirectionalEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(2, 3) }));
-        }
-
-
-        /// <summary>
-        /// This Should not be passing by the definition of cliques in directed graphs
-        /// </summary>
-        [TestMethod]
-        public void TestGetCliques()
-        {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 1);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(4, 5);
-            graph.AddEdge(5, 3);
-            //in a directed graph, edges only go one way, so for the expected cliques we need to add both directions
-            graph.AddEdge(2, 1);
-            graph.AddEdge(3, 2);
-            graph.AddEdge(1, 3);
-            graph.AddEdge(4, 3);
-            graph.AddEdge(5, 4);
-            graph.AddEdge(3, 5);
-
-            var cliques = graph.GetCliques().ToList();
-            List<HashSet<object>> expectedCliques = new List<HashSet<object>>()
-            {
-                new HashSet<object>() {1, 2, 3},
-                new HashSet<object>() {3, 4, 5}
-            };
-            Assert.AreEqual(expectedCliques.Count, cliques.Count);
-            foreach (var expectedClique in expectedCliques)
-            {
-                Assert.IsTrue(cliques.Any(c => c.SetEquals(expectedClique)));
-            }
-
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
-            graph2.AddEdge(1, 2);
-            graph2.AddEdge(2, 3);
-            graph2.AddEdge(3, 1);
-            graph2.AddEdge(3, 4);
-            graph2.AddEdge(4, 5);
-            graph2.AddEdge(5, 6);
-            graph2.AddEdge(6, 7);
-            graph2.AddEdge(7, 5);
-
-            var cliques2 = graph2.GetCliques().ToList();
-            List<HashSet<object>> expectedCliques2 = new List<HashSet<object>>()
-            { //we are defining cliques with 2 points, by some definitions these may not be cliques
-                new HashSet<object>() {1, 2 },
-                new HashSet<object>() {2, 3 },
-                new HashSet<object>() {3, 4 },
-                new HashSet<object>() {4, 5 },
-                new HashSet<object>() {5, 6 },
-                new HashSet<object>() {6, 7},
-            };
-            Trace.WriteLine(cliques2.First().Count);
-
-            Assert.AreEqual(expectedCliques2.Count, cliques2.Count);
-            foreach (var expectedClique in expectedCliques2)
-            {
-                Assert.IsTrue(cliques2.Any(c => c.SetEquals(expectedClique)));
-            }
-
-            
-        }
-
-        [TestMethod]
-        public void TestGetMaximalClique()
-        {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            //graph.AddEdge(3, 4);
-            //graph.AddEdge(4, 1);
-            //graph.AddEdge(2, 4);
-            //graph.AddEdge(3, 4);
-            graph.AddEdge(1, 3);
-
-            //graph.AddEdge(4, 5);
-            //graph.AddEdge(2, 6);
-            //graph.AddEdge(5, 6);
-
-            var maximalClique = graph.GetMaximalClique();
-            Assert.AreEqual(3, maximalClique.Count);
-            Assert.IsTrue(maximalClique.SetEquals(new HashSet<object> { 1, 2, 3 }));
+            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(2, 3) }));
         }
 
 

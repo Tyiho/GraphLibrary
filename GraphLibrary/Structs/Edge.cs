@@ -1,6 +1,8 @@
-﻿namespace GraphLibrary
+﻿using GraphLibrary.Interfaces;
+
+namespace GraphLibrary.Structs
 {
-    public struct Edge<T> : IEquatable<Edge<T>>  where T : notnull
+    public struct Edge<T> : IEdge<T>, IEquatable<Edge<T>> where T : notnull
     {
         public T Vertex1 { get; }
         public T Vertex2 { get; }
@@ -25,8 +27,11 @@
         }
         public (T, T) ToTuple() => (Vertex1, Vertex2);
         public bool Contains(T vertex) => Vertex1.Equals(vertex) || Vertex2.Equals(vertex);
-        public bool Equals(Edge<T> other) => (Vertex1.Equals(other.Vertex1) && Vertex2.Equals(other.Vertex2)) || (Vertex1.Equals(other.Vertex2) && Vertex2.Equals(other.Vertex1));
+
+        public bool Equals(Edge<T> other) => Vertex1.Equals(other.Vertex1) && Vertex2.Equals(other.Vertex2) || Vertex1.Equals(other.Vertex2) && Vertex2.Equals(other.Vertex1);
+        public bool Equals(IEdge<T>? other) => other is Edge<T> edge && Equals(edge);
         public override bool Equals(object? obj) => obj is Edge<T> other && Equals(other);
+
         public override int GetHashCode()
         {
             int hash1 = Vertex1.GetHashCode();

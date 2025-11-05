@@ -1,4 +1,5 @@
-﻿using GraphLibrary;
+﻿using GraphLibrary.Interfaces;
+using GraphLibrary.Structs;
 using System.Diagnostics;
 
 namespace GraphLibraryUnitTest
@@ -68,7 +69,8 @@ namespace GraphLibraryUnitTest
                 new Edge<object>(2, 3),
                 new Edge<object>(3, 1)
             };
-            graph.AddEdges(edgesToAdd);
+            List<IEdge<object>> edgesToAdd1 = edgesToAdd.Cast<IEdge<object>>().ToList();
+            graph.AddEdges(edgesToAdd1);
             Assert.AreEqual(3, graph.Edges.Count);
             foreach (var edge in edgesToAdd)
             {
@@ -301,7 +303,8 @@ namespace GraphLibraryUnitTest
                 new Edge<object>(1, 2),
                 new Edge<object>(2, 3)
             };
-            graph.RemoveEdges(edgesToRemove);
+            List<IEdge<object>> edgesToRemove1 = edgesToRemove.Cast<IEdge<object>>().ToList();
+            graph.RemoveEdges(edgesToRemove1);
             Assert.IsFalse(graph.ContainsEdge(1, 2));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
             Assert.IsTrue(graph.ContainsEdge(3, 4));
@@ -429,9 +432,9 @@ namespace GraphLibraryUnitTest
             graph.AddEdge(1, 3);
             graph.AddEdge(2, 3);
             var incidentEdgesOf1 = graph.GetIncidentEdges(1).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<Edge<object>> { new Edge<object>(1, 2), new Edge<object>(1, 3) }));
+            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<object>> { new Edge<object>(1, 2), new Edge<object>(1, 3) }));
             var incidentEdgesOf2 = graph.GetIncidentEdges(2).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<Edge<object>> { new Edge<object>(1, 2), new Edge<object>(2, 3) }));
+            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<object>> { new Edge<object>(1, 2), new Edge<object>(2, 3) }));
         }
 
         [TestMethod]

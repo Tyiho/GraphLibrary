@@ -1,19 +1,21 @@
-﻿namespace GraphLibrary
+﻿using GraphLibrary.Interfaces;
+
+namespace GraphLibrary.Structs
 {
-    public struct DirectionalGraph<T> : IEquatable<DirectionalGraph<T>> where T : notnull
+    public struct DirectionalGraph<T> : IGraph<T>, IEquatable<DirectionalGraph<T>> where T : notnull
     {
         public HashSet<T> Vertices { get; private set; }
-        public HashSet<DirectionalEdge<T>> Edges { get; private set; }
+        public HashSet<IEdge<T>> Edges { get; private set; }
 
         public DirectionalGraph()
         {
-            this.Vertices = new HashSet<T>();
-            this.Edges = new HashSet<DirectionalEdge<T>>();
+            Vertices = new HashSet<T>();
+            Edges = new HashSet<IEdge<T>>();
         }
         public DirectionalGraph(DirectionalGraph<T> graph)
         {
-            this.Vertices = graph.Vertices.ToHashSet();
-            this.Edges = graph.Edges.ToHashSet();
+            Vertices = graph.Vertices.ToHashSet();
+            Edges = graph.Edges.ToHashSet();
         }
 
 
@@ -31,8 +33,12 @@
         }
 
 
-        public void AddEdge(DirectionalEdge<T> edge)
+        public void AddEdge(IEdge<T> edge)
         {
+            if (edge is not DirectionalEdge<T> directionalEdge)
+            {
+                throw new ArgumentException("Edge must be of type DirectionalEdge<T>");
+            }
             Edges.Add(edge);
             Vertices.Add(edge.Vertex1);
             Vertices.Add(edge.Vertex2);
@@ -41,30 +47,26 @@
         public void AddEdge(T vertex1, T vertex2)
         {
             var edge = new DirectionalEdge<T>(vertex1, vertex2);
-            Edges.Add(edge);
-            Vertices.Add(vertex1);
-            Vertices.Add(vertex2);
+            AddEdge(edge);
         }
 
-        public void AddEdges(IEnumerable<DirectionalEdge<T>> edges)
+        public void AddEdges(IEnumerable<IEdge<T>> edges)
         {
             foreach (var edge in edges)
             {
-                Edges.Add(edge);
-                Vertices.Add(edge.Vertex1);
-                Vertices.Add(edge.Vertex2);
+                AddEdge(edge);
             }
         }
 
-        public void AddGraph(DirectionalGraph<T> graph)
+        public void AddGraph(IGraph<T> graph)
         {
-            this.AddVertices(graph.Vertices);
-            this.AddEdges(graph.Edges);
+            AddVertices(graph.Vertices);
+            AddEdges(graph.Edges);
         }
 
         public void ConnectGraph(DirectionalGraph<T> graph, T vertex1, T vertext2)
         {
-            if (!this.ContainsVertex(vertex1) && !this.ContainsVertex(vertext2))
+            if (!ContainsVertex(vertex1) && !ContainsVertex(vertext2))
             {
                 throw new ArgumentException("One vertex must be present in the existing graph to connect graphs.");
             }
@@ -73,11 +75,11 @@
                 throw new ArgumentException("One vertex must be present in the new graph to connect graphs.");
             }
 
-            this.AddGraph(graph);
-            this.AddEdge(vertex1, vertext2);
+            AddGraph(graph);
+            AddEdge(vertex1, vertext2);
         }
 
-        public IEnumerable<DirectionalEdge<T>> GetIncidentEdges(T vertex)
+        public IEnumerable<IEdge<T>> GetIncidentEdges(T vertex)
         {
             return Edges.Where(e => e.Contains(vertex)).AsEnumerable();
         }
@@ -129,11 +131,11 @@
             var edge = new DirectionalEdge<T>(vertex1, vertex2);
             return Edges.Contains(edge);
         }
-        public bool ContainsEdge(DirectionalEdge<T> edge)
+        public bool ContainsEdge(IEdge<T> edge)
         {
             return Edges.Contains(edge);
         }
-        public bool Contains(DirectionalEdge<T> edge)
+        public bool Contains(IEdge<T> edge)
         {
             return ContainsEdge(edge);
         }
@@ -141,22 +143,22 @@
         {
             return ContainsVertex(vertex);
         }
-        public bool Contains(DirectionalGraph<T> graph)
+        public bool Contains(IGraph<T> graph)
         {
             return ContainsGraph(graph);
         }
 
-        public bool IsSubGraphOf(DirectionalGraph<T> graph)
+        public bool IsSubGraphOf(IGraph<T> graph)
         {
             return Vertices.IsSubsetOf(graph.Vertices) && Edges.IsSubsetOf(graph.Edges);
         }
 
-        public bool IsSuperGraphOf(DirectionalGraph<T> graph)
+        public bool IsSuperGraphOf(IGraph<T> graph)
         {
             return Vertices.IsSupersetOf(graph.Vertices) && Edges.IsSupersetOf(graph.Edges);
         }
 
-        public bool ContainsGraph(DirectionalGraph<T> graph)
+        public bool ContainsGraph(IGraph<T> graph)
         {
             return IsSuperGraphOf(graph);
         }
@@ -167,7 +169,7 @@
             Edges.Remove(edge);
         }
 
-        public void RemoveEdge(DirectionalEdge<T> edge)
+        public void RemoveEdge(IEdge<T> edge)
         {
             Edges.Remove(edge);
         }
@@ -185,7 +187,7 @@
                 RemoveVertex(vertex);
             }
         }
-        public void RemoveEdges(IEnumerable<DirectionalEdge<T>> edges)
+        public void RemoveEdges(IEnumerable<IEdge<T>> edges)
         {
             foreach (var edge in edges)
             {
@@ -193,7 +195,7 @@
             }
         }
 
-        public void RemoveGraph(DirectionalGraph<T> graph)
+        public void RemoveGraph(IGraph<T> graph)
         {
             RemoveVertices(graph.Vertices);
             RemoveEdges(graph.Edges);
@@ -218,6 +220,8 @@
 
         public override bool Equals(object? obj) => obj is Graph<T> other && Equals(other);
 
+        public bool Equals(IGraph<T>? other) => other is DirectionalGraph<T> && Equals((DirectionalGraph<T>)other);
+
         public override int GetHashCode()
         {
             int hash = 17;
@@ -233,7 +237,7 @@
         }
 
 
-        public IEnumerable<DirectionalEdge<T>> GetIncidentArcs(T vertex)
+        public IEnumerable<IEdge<T>> GetIncidentArcs(T vertex)
         {
             return Edges.Where(e => e.Vertex1.Equals(vertex)).AsEnumerable();
         }
@@ -246,48 +250,6 @@
                 neighbors.Add(edge.Vertex2);
             }
             return neighbors.AsEnumerable();
-        }
-
-
-        /* maybe won't work as intended for directed graphs, 
-         * but here is an implementation of Bron-Kerbosch algorithm for finding cliques assuming neighbors must be directional
-         */
-        private IEnumerable<HashSet<T>> BronKerbosch(HashSet<T> R, HashSet<T> P, HashSet<T> X, ref List<HashSet<T>> cliques)
-        {
-            if (P.Count == 0 && X.Count == 0)
-            {
-                cliques.Add(R.ToHashSet());
-            }
-            foreach (var v in P.ToList())
-            {
-                var vSet = new HashSet<T> { v };
-                var neighbors = GetOutNeighbors(v).ToHashSet();
-                BronKerbosch(R.Union(vSet).ToHashSet(), P.Intersect(neighbors).ToHashSet(), X.Intersect(neighbors).ToHashSet(), ref cliques);
-                P.Remove(v);
-                X.Add(v);
-            }
-            return cliques;
-        }
-
-        public IEnumerable<HashSet<T>> GetCliques()
-        {
-            var cliques = new List<HashSet<T>>();
-            BronKerbosch(new HashSet<T>(), this.Vertices, new HashSet<T>(), ref cliques);
-            return cliques;
-        }
-
-        public HashSet<T> GetMaximalClique()
-        {
-            var cliques = GetCliques();
-            HashSet<T> maxClique = new HashSet<T>();
-            foreach (var clique in cliques)
-            {
-                if (clique.Count > maxClique.Count)
-                {
-                    maxClique = clique;
-                }
-            }
-            return maxClique;
         }
     }
 }

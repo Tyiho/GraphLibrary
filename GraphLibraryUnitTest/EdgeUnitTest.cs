@@ -1,4 +1,4 @@
-﻿using GraphLibrary;
+﻿using GraphLibrary.Structs;
 
 namespace GraphLibraryUnitTest
 {
