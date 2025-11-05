@@ -2,7 +2,7 @@
 
 namespace GraphLibrary.Structs
 {
-    public struct Graph<T> : IGraph<T>, IEquatable<IGraph<T>>, IEquatable<Graph<T>> where T : notnull
+    public struct Graph<T> : IGraph<T>, IEquatable<Graph<T>> where T : notnull
     {
         public HashSet<T> Vertices { get; private set; }
         public HashSet<IEdge<T>> Edges { get; private set; }

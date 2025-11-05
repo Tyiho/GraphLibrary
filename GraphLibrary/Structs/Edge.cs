@@ -9,6 +9,7 @@ namespace GraphLibrary.Structs
 
         public Edge(T vertex1, T vertex2)
         {
+            if (vertex1.Equals(vertex2)) throw new ArgumentException("An edge cannot connect a vertex to itself.");
             Vertex1 = vertex1;
             Vertex2 = vertex2;
         }
