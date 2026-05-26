@@ -14,10 +14,10 @@ namespace GraphLibraryUnitTest
             Assert.IsTrue(tree.Vertices.SetEquals(new HashSet<int> { 1 }));
             Assert.IsTrue(tree.Edges.SetEquals(new HashSet<IEdge<int>>()));
 
-            Tree<object> tree1 = new Tree<object>(1, new HashSet<IEdge<object>> (){ new DirectionalEdge<object>(1,2), new DirectionalEdge<object>(1, 3), new DirectionalEdge<object>(2,3), });
+            Tree<int> tree1 = new Tree<int>(1, new HashSet<IEdge<int>> (){ new DirectionalEdge<int>(1,2), new DirectionalEdge<int>(1, 3), new DirectionalEdge<int>(2,3), });
             Assert.AreEqual(3, tree1.Vertices.Count);
             Assert.AreEqual(2, tree1.Edges.Count);
-            Assert.IsFalse(tree1.Edges.Contains(new DirectionalEdge<object>(2,3)));
+            Assert.IsFalse(tree1.Edges.Contains(new DirectionalEdge<int>(2,3)));
         }
 
         [TestMethod]

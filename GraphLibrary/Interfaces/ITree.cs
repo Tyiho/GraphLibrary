@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraphLibrary.Interfaces
 {
-    public interface ITree<T> : IGraph<T>, IEquatable<ITree<T>> where T : notnull
+    public interface ITree<T> : IGraph<T>, IEquatable<ITree<T>> where T : IEquatable<T>
     {
         T Root { get; }
 

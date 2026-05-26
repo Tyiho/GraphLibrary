@@ -1,58 +1,57 @@
 ﻿using GraphLibrary.Interfaces;
 
-namespace GraphLibrary.Structs
+namespace GraphLibrary.Structs;
+
+public readonly struct DirectionalEdge<T> : IEdge<T>, IEquatable<IEdge<T>>, IEquatable<DirectionalEdge<T>> where T : IEquatable<T>
 {
-    public struct DirectionalEdge<T> : IEdge<T>, IEquatable<IEdge<T>>, IEquatable<DirectionalEdge<T>> where T : notnull
+    public T Vertex1 { get; }
+    public T Vertex2 { get; }
+
+    public DirectionalEdge(T vertex1, T vertex2)
     {
-        public T Vertex1 { get; }
-        public T Vertex2 { get; }
-
-        public DirectionalEdge(T vertex1, T vertex2)
-        {
-            if (vertex1.Equals(vertex2)) throw new ArgumentException("An edge cannot connect a vertex to itself.");
-            Vertex1 = vertex1;
-            Vertex2 = vertex2;
-        }
-        public DirectionalEdge((T, T) vertices) : this(vertices.Item1, vertices.Item2) { }
-
-        public IEnumerable<T> AsEnumerable()
-        {
-            yield return Vertex1;
-            yield return Vertex2;
-        }
-        public void Deconstruct(out T vertex1, out T vertex2)
-        {
-            vertex1 = Vertex1;
-            vertex2 = Vertex2;
-        }
-        public (T, T) ToTuple() => (Vertex1, Vertex2);
-        public bool Contains(T vertex) => Vertex1.Equals(vertex) || Vertex2.Equals(vertex);
-
-
-        public bool Equals(DirectionalEdge<T> other) => Vertex1.Equals(other.Vertex1) && Vertex2.Equals(other.Vertex2);
-        public override bool Equals(object? obj) => obj is DirectionalEdge<T> other && Equals(other);
-
-        public bool Equals(IEdge<T>? other) => other is DirectionalEdge<T> edge && Equals(edge);
-
-        public override int GetHashCode()
-        {
-            int hash1 = Vertex1.GetHashCode();
-            int hash2 = Vertex2.GetHashCode();
-            return hash1 ^ hash2;
-        }
-
-        public T? GetConnectedVertex(T vertex)
-        {
-            if (vertex.Equals(Vertex1))
-            {
-                return Vertex2;
-            }
-            return default;
-        }
-
-        public bool IsVertex1ReachableFrom(T vertex) => Contains(vertex) && Vertex1.Equals(vertex);
-        public bool IsVertex2ReachableFrom(T vertex) => Contains(vertex);
-
-        public override string ToString() => $"({Vertex1} -> {Vertex2})";
+        if (vertex1.Equals(vertex2)) throw new ArgumentException("An edge cannot connect a vertex to itself.");
+        Vertex1 = vertex1;
+        Vertex2 = vertex2;
     }
+    public DirectionalEdge((T, T) vertices) : this(vertices.Item1, vertices.Item2) { }
+
+    public IEnumerable<T> AsEnumerable()
+    {
+        yield return Vertex1;
+        yield return Vertex2;
+    }
+    public void Deconstruct(out T vertex1, out T vertex2)
+    {
+        vertex1 = Vertex1;
+        vertex2 = Vertex2;
+    }
+    public (T, T) ToTuple() => (Vertex1, Vertex2);
+    public bool Contains(T vertex) => Vertex1.Equals(vertex) || Vertex2.Equals(vertex);
+
+
+    public bool Equals(DirectionalEdge<T> other) => Vertex1.Equals(other.Vertex1) && Vertex2.Equals(other.Vertex2);
+    public override bool Equals(object? obj) => obj is DirectionalEdge<T> other && Equals(other);
+
+    public bool Equals(IEdge<T>? other) => other is DirectionalEdge<T> edge && Equals(edge);
+
+    public override int GetHashCode()
+    {
+        int hash1 = Vertex1.GetHashCode();
+        int hash2 = Vertex2.GetHashCode();
+        return hash1 ^ hash2;
+    }
+
+    public NullableGeneric<T> GetConnectedVertex(T vertex)
+    {
+        if (vertex.Equals(Vertex1))
+        {
+            return Vertex2;
+        }
+        return new NullableGeneric<T>(true, default);
+    }
+
+    public bool IsVertex1ReachableFrom(T vertex) => Contains(vertex) && Vertex1.Equals(vertex);
+    public bool IsVertex2ReachableFrom(T vertex) => Contains(vertex);
+
+    public override string ToString() => $"({Vertex1} -> {Vertex2})";
 }

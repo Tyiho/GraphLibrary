@@ -1,294 +1,291 @@
 ﻿using GraphLibrary.Interfaces;
 
-namespace GraphLibrary.Structs
+namespace GraphLibrary.Structs;
+
+public struct Graph<T> : IGraph<T>, IEquatable<Graph<T>> where T : IEquatable<T>
 {
-    public struct Graph<T> : IGraph<T>, IEquatable<Graph<T>> where T : notnull
+    public HashSet<T> Vertices { get; private set; }
+    public HashSet<IEdge<T>> Edges { get; private set; }
+
+    public Graph()
     {
-        public HashSet<T> Vertices { get; private set; }
-        public HashSet<IEdge<T>> Edges { get; private set; }
+        Vertices = new HashSet<T>();
+        Edges = new HashSet<IEdge<T>>();
+    }
 
-        public Graph()
-        {
-            Vertices = new HashSet<T>();
-            Edges = new HashSet<IEdge<T>>();
-        }
-
-        public Graph(Graph<T> graph)
-        {
-            Vertices = graph.Vertices.ToHashSet();
-            Edges = graph.Edges.ToHashSet();
-        }
+    public Graph(Graph<T> graph)
+    {
+        Vertices = graph.Vertices.ToHashSet();
+        Edges = graph.Edges.ToHashSet();
+    }
 
 
-        public void AddVertex(T vertex)
+    public void AddVertex(T vertex)
+    {
+        Vertices.Add(vertex);
+    }
+
+    public void AddVertices(IEnumerable<T> vertices)
+    {
+        foreach (var vertex in vertices)
         {
             Vertices.Add(vertex);
         }
+    }
 
-        public void AddVertices(IEnumerable<T> vertices)
+    public void AddEdge(IEdge<T> edge)
+    {
+        if (edge is not Edge<T>)
         {
-            foreach (var vertex in vertices)
+            throw new ArgumentException("Edge must be of type Edge<T>");
+        }
+        Edges.Add(edge);
+        Vertices.Add(edge.Vertex1);
+        Vertices.Add(edge.Vertex2);
+    }
+
+    public void AddEdge(T vertex1, T vertex2)
+    {
+        var edge = new Edge<T>(vertex1, vertex2);
+        Edges.Add(edge);
+        Vertices.Add(vertex1);
+        Vertices.Add(vertex2);
+    }
+
+
+    public void AddEdges(IEnumerable<IEdge<T>> edges)
+    {
+        foreach (var edge in edges)
+        {
+            AddEdge(edge);
+        }
+    }
+
+    public void AddGraph(IGraph<T> graph)
+    {
+        AddVertices(graph.Vertices);
+        AddEdges(graph.Edges);
+    }
+
+    public void ConnectGraph(Graph<T> graph, T vertex1, T vertex2)
+    {
+        if (!ContainsVertex(vertex1) && !ContainsVertex(vertex2))
+        {
+            throw new ArgumentException("One Vertex must be present in the existing graph to connect graphs.");
+        }
+        if (!graph.ContainsVertex(vertex1) && !graph.ContainsVertex(vertex2))
+        {
+            throw new ArgumentException("One Vertex must be present in the new graph to connect graphs.");
+        }
+
+        AddGraph(graph);
+        AddEdge(vertex1, vertex2);
+    }
+
+    public void RemoveEdge(T vertex1, T vertex2)
+    {
+        var edge = new Edge<T>(vertex1, vertex2);
+        Edges.Remove(edge);
+    }
+
+    public void RemoveEdge(IEdge<T> edge)
+    {
+        Edges.Remove(edge);
+    }
+
+    public void RemoveVertex(T vertex)
+    {
+        Vertices.Remove(vertex);
+        Edges.RemoveWhere(e => e.Contains(vertex));
+    }
+
+    public void RemoveVertices(IEnumerable<T> vertices)
+    {
+        foreach (var vertex in vertices)
+        {
+            RemoveVertex(vertex);
+        }
+    }
+    public void RemoveEdges(IEnumerable<IEdge<T>> edges)
+    {
+        foreach (var edge in edges)
+        {
+            RemoveEdge(edge);
+        }
+    }
+
+    public void RemoveGraph(Graph<T> graph)
+    {
+        RemoveVertices(graph.Vertices);
+        RemoveEdges(graph.Edges);
+    }
+
+    public void Clear()
+    {
+        Vertices.Clear();
+        Edges.Clear();
+    }
+
+    public readonly int GetIncidentEdgeCount(T vertex)
+    {
+        return Edges.Count(e => e.Contains(vertex));
+    }
+
+    public readonly IEnumerable<IEdge<T>> GetIncidentEdges(T vertex)
+    {
+        return Edges.Where(e => e.Contains(vertex));
+    }
+
+    public readonly IEnumerable<T> GetNeighbors(T vertex)
+    {
+        var neighbors = new HashSet<T>();
+        foreach (var edge in GetIncidentEdges(vertex))
+        {
+            if (edge.Vertex1.Equals(vertex))
             {
-                Vertices.Add(vertex);
+                neighbors.Add(edge.Vertex2);
+            }
+            else
+            {
+                neighbors.Add(edge.Vertex1);
             }
         }
+        return neighbors;
+    }
 
-        public void AddEdge(IEdge<T> edge)
+    public readonly int Degree(T vertex)
+    {
+        return GetIncidentEdgeCount(vertex);
+    }
+
+    public readonly bool IsEndVertex(T vertex)
+    {
+        return Degree(vertex) == 1;
+    }
+
+    public readonly bool IsIsolatedVertex(T vertex)
+    {
+        return Degree(vertex) == 0;
+    }
+
+    public readonly bool IsUniversalVertex(T vertex)
+    {
+        return Degree(vertex) == Vertices.Count - 1;
+    }
+
+    public readonly bool ContainsVertex(T vertex)
+    {
+        return Vertices.Contains(vertex);
+    }
+
+    public readonly bool ContainsEdge(T vertex1, T vertex2)
+    {
+        var edge = new Edge<T>(vertex1, vertex2);
+        return Edges.Contains(edge);
+    }
+    public readonly bool ContainsEdge(IEdge<T> edge)
+    {
+        return Edges.Contains(edge);
+    }
+    public readonly bool Contains(IEdge<T> edge)
+    {
+        return ContainsEdge(edge);
+    }
+    public readonly bool Contains(T vertex)
+    {
+        return ContainsVertex(vertex);
+    }
+    public readonly bool Contains(IGraph<T> graph)
+    {
+        return ContainsGraph(graph);
+    }
+
+    public readonly bool IsSubGraphOf(IGraph<T> graph)
+    {
+        return Vertices.IsSubsetOf(graph.Vertices) && Edges.IsSubsetOf(graph.Edges);
+    }
+
+    public readonly bool IsSuperGraphOf(IGraph<T> graph)
+    {
+        return Vertices.IsSupersetOf(graph.Vertices) && Edges.IsSupersetOf(graph.Edges);
+    }
+
+    public readonly bool ContainsGraph(IGraph<T> graph)
+    {
+        return IsSuperGraphOf(graph);
+    }
+
+    public readonly bool IsEmpty()
+    {
+        return Vertices.Count == 0 && Edges.Count == 0;
+    }
+
+    public readonly Graph<T> Clone()
+    {
+        return new Graph<T>(this);
+    }
+
+    public readonly bool Equals(Graph<T> other) => Vertices.SetEquals(other.Vertices) && Edges.SetEquals(other.Edges);
+    public readonly bool Equals(IGraph<T>? other) => other is Graph<T> graph && Equals(graph);
+    public readonly override bool Equals(object? obj) => obj is Graph<T> other && Equals(other);
+
+
+    /* Bron Kerbosch algorithm without pivoting
+     *
+     * I found it on Wikipedia: https://en.wikipedia.org/wiki/Bron-Kerbosch_algorithm
+     *
+     *  algorithm BronKerbosch2(R, P, X) is
+     *      if P and X are both empty then
+     *          report R as a maximal clique
+     *      for each vertex v in P do
+     *          BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
+     *          P := P \ {v}
+     *          X := X ⋃ {v}
+     */
+
+    private readonly IEnumerable<HashSet<T>> BronKerbosch(HashSet<T> R, HashSet<T> P, HashSet<T> X, ref List<HashSet<T>> cliques)
+    {
+        if (P.Count == 0 && X.Count == 0)
         {
-            if (edge is not Edge<T>)
+            cliques.Add(R.ToHashSet());
+        }
+        foreach (var v in P)
+        {
+            var vSet = new HashSet<T> { v };
+            var neighbors = GetNeighbors(v).ToHashSet();
+            BronKerbosch(R.Union(vSet).ToHashSet(), P.Intersect(neighbors).ToHashSet(), X.Intersect(neighbors).ToHashSet(), ref cliques);
+            P.Remove(v);
+            X.Add(v);
+        }
+        return cliques;
+    }
+
+    public readonly IEnumerable<HashSet<T>> GetCliques()
+    {
+        var cliques = new List<HashSet<T>>();
+        BronKerbosch(new HashSet<T>(), Vertices, new HashSet<T>(), ref cliques);
+        return cliques;
+    }
+
+    public readonly HashSet<T> GetMaximalClique()
+    {
+        var cliques = GetCliques();
+        HashSet<T> maxClique = new HashSet<T>();
+        foreach (var clique in cliques)
+        {
+            if (clique.Count > maxClique.Count)
             {
-                throw new ArgumentException("Edge must be of type Edge<T>");
-            }
-            Edges.Add(edge);
-            Vertices.Add(edge.Vertex1);
-            Vertices.Add(edge.Vertex2);
-        }
-
-        public void AddEdge(T vertex1, T vertex2)
-        {
-            var edge = new Edge<T>(vertex1, vertex2);
-            Edges.Add(edge);
-            Vertices.Add(vertex1);
-            Vertices.Add(vertex2);
-        }
-
-
-        public void AddEdges(IEnumerable<IEdge<T>> edges)
-        {
-            foreach (var edge in edges)
-            {
-                AddEdge(edge);
+                maxClique = clique;
             }
         }
-
-        public void AddGraph(IGraph<T> graph)
-        {
-            AddVertices(graph.Vertices);
-            AddEdges(graph.Edges);
-        }
-
-        public void ConnectGraph(Graph<T> graph, T vertex1, T vertext2)
-        {
-            if (!ContainsVertex(vertex1) && !ContainsVertex(vertext2))
-            {
-                throw new ArgumentException("One Vertex must be present in the existing graph to connect graphs.");
-            }
-            if (!graph.ContainsVertex(vertex1) && !graph.ContainsVertex(vertext2))
-            {
-                throw new ArgumentException("One Vertex must be present in the new graph to connect graphs.");
-            }
-
-            AddGraph(graph);
-            AddEdge(vertex1, vertext2);
-        }
-
-        public void RemoveEdge(T vertex1, T vertex2)
-        {
-            var edge = new Edge<T>(vertex1, vertex2);
-            Edges.Remove(edge);
-        }
-
-        public void RemoveEdge(IEdge<T> edge)
-        {
-            Edges.Remove(edge);
-        }
-
-        public void RemoveVertex(T vertex)
-        {
-            Vertices.Remove(vertex);
-            Edges.RemoveWhere(e => e.Contains(vertex));
-        }
-
-        public void RemoveVertices(IEnumerable<T> vertices)
-        {
-            foreach (var vertex in vertices)
-            {
-                RemoveVertex(vertex);
-            }
-        }
-        public void RemoveEdges(IEnumerable<IEdge<T>> edges)
-        {
-            foreach (var edge in edges)
-            {
-                RemoveEdge(edge);
-            }
-        }
-
-        public void RemoveGraph(Graph<T> graph)
-        {
-            RemoveVertices(graph.Vertices);
-            RemoveEdges(graph.Edges);
-        }
-
-        public void Clear()
-        {
-            Vertices.Clear();
-            Edges.Clear();
-        }
-
-        public IEnumerable<IEdge<T>> GetIncidentEdges(T vertex)
-        {
-            return Edges.Where(e => e.Contains(vertex)).AsEnumerable();
-        }
-
-        public IEnumerable<T> GetNeighbors(T vertex)
-        {
-            var neighbors = new HashSet<T>();
-            foreach (var edge in GetIncidentEdges(vertex))
-            {
-                if (edge.Vertex1.Equals(vertex))
-                {
-                    neighbors.Add(edge.Vertex2);
-                }
-                else
-                {
-                    neighbors.Add(edge.Vertex1);
-                }
-            }
-            return neighbors.AsEnumerable();
-        }
-
-        public int Degree(T vertex)
-        {
-            return GetIncidentEdges(vertex).Count();
-        }
-
-        public bool IsEndVertex(T vertex)
-        {
-            return Degree(vertex) == 1;
-        }
-
-        public bool IsIsolatedVertex(T vertex)
-        {
-            return Degree(vertex) == 0;
-        }
-
-        public bool IsUniversalVertex(T vertex)
-        {
-            return Degree(vertex) == Vertices.Count - 1;
-        }
-
-        public bool ContainsVertex(T vertex)
-        {
-            return Vertices.Contains(vertex);
-        }
-
-        public bool ContainsEdge(T vertex1, T vertex2)
-        {
-            var edge = new Edge<T>(vertex1, vertex2);
-            return Edges.Contains(edge);
-        }
-        public bool ContainsEdge(IEdge<T> edge)
-        {
-            return Edges.Contains(edge);
-        }
-        public bool Contains(IEdge<T> edge)
-        {
-            return ContainsEdge(edge);
-        }
-        public bool Contains(T vertex)
-        {
-            return ContainsVertex(vertex);
-        }
-        public bool Contains(IGraph<T> graph)
-        {
-            return ContainsGraph(graph);
-        }
-
-        public bool IsSubGraphOf(IGraph<T> graph)
-        {
-            return Vertices.IsSubsetOf(graph.Vertices) && Edges.IsSubsetOf(graph.Edges);
-        }
-
-        public bool IsSuperGraphOf(IGraph<T> graph)
-        {
-            return Vertices.IsSupersetOf(graph.Vertices) && Edges.IsSupersetOf(graph.Edges);
-        }
-
-        public bool ContainsGraph(IGraph<T> graph)
-        {
-            return IsSuperGraphOf(graph);
-        }
-
-        public bool isEmpty()
-        {
-            return Vertices.Count == 0 && Edges.Count == 0;
-        }
-
-        public Graph<T> Clone()
-        {
-            return new Graph<T>(this);
-        }
-
-        public bool Equals(Graph<T> other) => Vertices.SetEquals(other.Vertices) && Edges.SetEquals(other.Edges);
-        public bool Equals(IGraph<T>? other) => other is Graph<T> && Equals((Graph<T>)other);
-        public override bool Equals(object? obj) => obj is Graph<T> other && Equals(other);
+        return maxClique;
+    }
 
 
-        /* Bron Kerbosch algorithm without pivoting
-         * 
-         * I found it on Wikipedia: https://en.wikipedia.org/wiki/Bron-Kerbosch_algorithm
-         * 
-         *  algorithm BronKerbosch2(R, P, X) is
-         *      if P and X are both empty then
-         *          report R as a maximal clique
-         *      for each vertex v in P do
-         *          BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
-         *          P := P \ {v}
-         *          X := X ⋃ {v}
-         */
-
-        private IEnumerable<HashSet<T>> BronKerbosch(HashSet<T> R, HashSet<T> P, HashSet<T> X, ref List<HashSet<T>> cliques)
-        {
-            if (P.Count == 0 && X.Count == 0)
-            {
-                cliques.Add(R.ToHashSet());
-            }
-            foreach (var v in P)
-            {
-                var vSet = new HashSet<T> { v };
-                var neighbors = GetNeighbors(v).ToHashSet();
-                BronKerbosch(R.Union(vSet).ToHashSet(), P.Intersect(neighbors).ToHashSet(), X.Intersect(neighbors).ToHashSet(), ref cliques);
-                P.Remove(v);
-                X.Add(v);
-            }
-            return cliques;
-        }
-
-        public IEnumerable<HashSet<T>> GetCliques()
-        {
-            var cliques = new List<HashSet<T>>();
-            BronKerbosch(new HashSet<T>(), Vertices, new HashSet<T>(), ref cliques);
-            return cliques;
-        }
-
-        public HashSet<T> GetMaximalClique()
-        {
-            var cliques = GetCliques();
-            HashSet<T> maxClique = new HashSet<T>();
-            foreach (var clique in cliques)
-            {
-                if (clique.Count > maxClique.Count)
-                {
-                    maxClique = clique;
-                }
-            }
-            return maxClique;
-        }
-
-
-        public override int GetHashCode()
-        {
-            int hash = 17;
-            foreach (var vertex in Vertices.OrderBy(v => v.GetHashCode()))
-            {
-                hash = hash * 31 + vertex.GetHashCode();
-            }
-            foreach (var edge in Edges.OrderBy(e => e.GetHashCode()))
-            {
-                hash = hash * 31 + edge.GetHashCode();
-            }
-            return hash;
-        }
+    public readonly override int GetHashCode()
+    {
+        int hashVertices = Vertices.Aggregate(0, (hash, vertex) => hash ^ vertex.GetHashCode());
+        int hashEdges = Edges.Aggregate(0, (hash, edge) => hash ^ edge.GetHashCode());
+        return hashVertices ^ hashEdges;
     }
 }

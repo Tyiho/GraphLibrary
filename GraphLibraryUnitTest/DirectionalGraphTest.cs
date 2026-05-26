@@ -10,7 +10,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestGraphCreation()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -21,7 +21,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             Assert.IsTrue(graph.Vertices.Count == 0);
             graph.AddVertex(1);
             Assert.IsTrue(graph.Vertices.Count == 1);
@@ -35,22 +35,22 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddEdge()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             Assert.IsTrue(graph.Edges.Count == 0);
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.Edges.Count == 1);
-            Assert.IsTrue(graph.Edges.Contains(new DirectionalEdge<object>(1, 2)));
-            Assert.IsFalse(graph.Edges.Contains(new DirectionalEdge<object>(2, 3)));
+            Assert.IsTrue(graph.Edges.Contains(new DirectionalEdge<int>(1, 2)));
+            Assert.IsFalse(graph.Edges.Contains(new DirectionalEdge<int>(2, 3)));
             graph.AddEdge(2, 3);
-            Assert.IsTrue(graph.Edges.Contains(new DirectionalEdge<object>(2, 3)));
+            Assert.IsTrue(graph.Edges.Contains(new DirectionalEdge<int>(2, 3)));
             Assert.IsTrue(graph.Edges.Count == 2);
         }
 
         [TestMethod]
         public void TestAddVertices()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
-            List<object> verticesToAdd = new List<object>() { 1, 2, 3, 4, 5 };
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
+            List<int> verticesToAdd = new List<int>() { 1, 2, 3, 4, 5 };
             graph.AddVertices(verticesToAdd);
             Assert.AreEqual(5, graph.Vertices.Count);
             foreach (var vertex in verticesToAdd)
@@ -62,14 +62,14 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddEdges()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
-            List<DirectionalEdge<object>> edgesToAdd = new List<DirectionalEdge<object>>()
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
+            List<DirectionalEdge<int>> edgesToAdd = new List<DirectionalEdge<int>>()
             {
-                new DirectionalEdge<object>(1, 2),
-                new DirectionalEdge<object>(2, 3),
-                new DirectionalEdge<object>(3, 1)
+                new DirectionalEdge<int>(1, 2),
+                new DirectionalEdge<int>(2, 3),
+                new DirectionalEdge<int>(3, 1)
             };
-            List<IEdge<object>> edgesToAdd1 = edgesToAdd.Cast<IEdge<object>>().ToList();
+            List<IEdge<int>> edgesToAdd1 = edgesToAdd.Cast<IEdge<int>>().ToList();
             graph.AddEdges(edgesToAdd1);
             Assert.AreEqual(3, graph.Edges.Count);
             foreach (var edge in edgesToAdd)
@@ -81,10 +81,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(3, 4);
             graph2.AddEdge(4, 5);
             graph2.AddEdge(1, 2); //duplicate edge to test that it is not added twice
@@ -96,19 +96,19 @@ namespace GraphLibraryUnitTest
             {
                 Assert.IsTrue(graph1.Vertices.Contains(i));
             }
-            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<object>(1, 2)));
-            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<object>(2, 3)));
-            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<object>(3, 4)));
-            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<object>(4, 5)));
+            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<int>(1, 2)));
+            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<int>(2, 3)));
+            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<int>(3, 4)));
+            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<int>(4, 5)));
         }
 
         [TestMethod]
         public void TestConnectGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(4, 5);
             graph2.AddEdge(5, 6);
 
@@ -119,14 +119,14 @@ namespace GraphLibraryUnitTest
 
             Assert.AreEqual(6, graph1.Vertices.Count);
             Assert.AreEqual(5, graph1.Edges.Count);
-            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<object>(3, 4)));
+            Assert.IsTrue(graph1.Edges.Contains(new DirectionalEdge<int>(3, 4)));
         }
 
 
         [TestMethod]
         public void TestContainsVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.ContainsVertex(1));
             Assert.IsTrue(graph.ContainsVertex(2));
@@ -136,21 +136,21 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContainsEdge()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.ContainsEdge(1, 2));
-            Assert.IsTrue(graph.ContainsEdge(new DirectionalEdge<object>(1, 2)));
+            Assert.IsTrue(graph.ContainsEdge(new DirectionalEdge<int>(1, 2)));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
-            Assert.IsFalse(graph.ContainsEdge(new DirectionalEdge<object>(2, 3)));
+            Assert.IsFalse(graph.ContainsEdge(new DirectionalEdge<int>(2, 3)));
         }
 
         [TestMethod]
         public void TestSubGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(1, 2);
             Assert.IsTrue(graph2.IsSubGraphOf(graph1));
             graph2.AddEdge(3, 4);
@@ -160,10 +160,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestSuperGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
 
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(1, 2);
             graph2.AddEdge(2, 3);
 
@@ -174,10 +174,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContainsGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(1, 2);
             Assert.IsTrue(graph1.ContainsGraph(graph2));
             graph2.AddEdge(3, 4);
@@ -189,7 +189,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContains()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -198,12 +198,12 @@ namespace GraphLibraryUnitTest
             Assert.IsTrue(graph.Contains(2));
             Assert.IsTrue(graph.Contains(3));
             Assert.IsFalse(graph.Contains(4));
-            Assert.IsTrue(graph.Contains(new DirectionalEdge<object>(1, 2)));
-            Assert.IsTrue(graph.Contains(new DirectionalEdge<object>(2, 3)));
-            Assert.IsTrue(graph.Contains(new DirectionalEdge<object>(3, 1)));
-            Assert.IsFalse(graph.Contains(new DirectionalEdge<object>(1, 4)));
+            Assert.IsTrue(graph.Contains(new DirectionalEdge<int>(1, 2)));
+            Assert.IsTrue(graph.Contains(new DirectionalEdge<int>(2, 3)));
+            Assert.IsTrue(graph.Contains(new DirectionalEdge<int>(3, 1)));
+            Assert.IsFalse(graph.Contains(new DirectionalEdge<int>(1, 4)));
 
-            DirectionalGraph<object> subGraph = new DirectionalGraph<object>();
+            DirectionalGraph<int> subGraph = new DirectionalGraph<int>();
             subGraph.AddEdge(1, 2);
             Assert.IsTrue(graph.Contains(subGraph));
             subGraph.AddEdge(2, 4);
@@ -213,7 +213,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestDegree()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -225,22 +225,22 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestNeighbors()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
             var neighborsOf1 = graph.GetNeighbors(1).ToHashSet();
-            Assert.IsTrue(neighborsOf1.SetEquals(new HashSet<object> { 2, 3 }));
+            Assert.IsTrue(neighborsOf1.SetEquals(new HashSet<int> { 2, 3 }));
             var neighborsOf2 = graph.GetNeighbors(2).ToHashSet();
-            Assert.IsTrue(neighborsOf2.SetEquals(new HashSet<object> { 1, 3 }));
+            Assert.IsTrue(neighborsOf2.SetEquals(new HashSet<int> { 1, 3 }));
             var neighborsOf3 = graph.GetNeighbors(3).ToHashSet();
-            Assert.IsTrue(neighborsOf3.SetEquals(new HashSet<object> { 1, 2 }));
+            Assert.IsTrue(neighborsOf3.SetEquals(new HashSet<int> { 1, 2 }));
         }
 
         [TestMethod]
         public void TestRemoveVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             Assert.IsTrue(graph.ContainsVertex(2));
@@ -253,7 +253,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveEdge()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             Assert.IsTrue(graph.ContainsEdge(1, 2));
@@ -266,7 +266,7 @@ namespace GraphLibraryUnitTest
             graph.AddEdge(1, 2);
 
             //attempt to remove edge in opposite direction: should not remove anything
-            graph.RemoveEdge(new DirectionalEdge<object>(2, 1));
+            graph.RemoveEdge(new DirectionalEdge<int>(2, 1));
 
 
             Assert.IsTrue(graph.ContainsEdge(1, 2));
@@ -277,11 +277,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveVertices()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 4);
-            List<object> verticesToRemove = new List<object>() { 2, 3 };
+            List<int> verticesToRemove = new List<int>() { 2, 3 };
             graph.RemoveVertices(verticesToRemove);
             Assert.IsFalse(graph.ContainsVertex(2));
             Assert.IsFalse(graph.ContainsVertex(3));
@@ -296,16 +296,16 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveEdges()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 4);
-            List<DirectionalEdge<object>> edgesToRemove = new List<DirectionalEdge<object>>()
+            List<DirectionalEdge<int>> edgesToRemove = new List<DirectionalEdge<int>>()
             {
-                new DirectionalEdge<object>(1, 2),
-                new DirectionalEdge<object>(2, 3)
+                new DirectionalEdge<int>(1, 2),
+                new DirectionalEdge<int>(2, 3)
             };
-            List<IEdge<object>> edgesToRemove1 = edgesToRemove.Cast<IEdge<object>>().ToList();
+            List<IEdge<int>> edgesToRemove1 = edgesToRemove.Cast<IEdge<int>>().ToList();
             graph.RemoveEdges(edgesToRemove1);
             Assert.IsFalse(graph.ContainsEdge(1, 2));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
@@ -319,11 +319,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveGraph()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 4);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(2, 3);
             graph2.AddEdge(3, 4);
 
@@ -340,11 +340,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestClear()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.Clear();
-            Assert.IsTrue(graph.isEmpty());
+            Assert.IsTrue(graph.IsEmpty());
             Assert.AreEqual(0, graph.Vertices.Count);
             Assert.AreEqual(0, graph.Edges.Count);
         }
@@ -353,16 +353,16 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestEquals()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 1);
 
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>(graph1);
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>(graph1);
 
             Assert.AreEqual(graph1, graph2);
 
-            graph2.AddEdge(4, "banana");
+            graph2.AddEdge(4, 5);
 
             Assert.AreNotEqual(graph1, graph2);
         }
@@ -370,33 +370,33 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestClone()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 1);
-            DirectionalGraph<object> graph2 = graph1.Clone();
+            DirectionalGraph<int> graph2 = graph1.Clone();
             Assert.AreEqual(graph1, graph2);
-            graph2.AddEdge(4, "banana");
+            graph2.AddEdge(4, 5);
             Assert.AreNotEqual(graph1, graph2);
         }
 
         [TestMethod]
         public void TestIsEmpty()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
-            Assert.IsTrue(graph.isEmpty());
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
+            Assert.IsTrue(graph.IsEmpty());
             graph.AddVertex(1);
-            Assert.IsFalse(graph.isEmpty());
+            Assert.IsFalse(graph.IsEmpty());
             graph.RemoveVertex(1);
-            Assert.IsTrue(graph.isEmpty());
+            Assert.IsTrue(graph.IsEmpty());
             graph.AddEdge(1, 2);
-            Assert.IsFalse(graph.isEmpty());
+            Assert.IsFalse(graph.IsEmpty());
         }
 
         [TestMethod]
         public void TestIsEndVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.IsEndVertex(1));
             Assert.IsTrue(graph.IsEndVertex(2));
@@ -407,7 +407,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestIsIsolatedVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddVertex(1);
             Assert.IsTrue(graph.IsIsolatedVertex(1));
             graph.AddEdge(1, 2);
@@ -417,7 +417,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestIsUniversalVertex()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(1, 3);
             Assert.IsTrue(graph.IsUniversalVertex(1));
@@ -429,24 +429,24 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestGetIncidentEdges()
         {
-            DirectionalGraph<object> graph = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph = new DirectionalGraph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(1, 3);
             graph.AddEdge(2, 3);
             var incidentEdgesOf1 = graph.GetIncidentEdges(1).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(1, 3) }));
+            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<int>> { new DirectionalEdge<int>(1, 2), new DirectionalEdge<int>(1, 3) }));
             var incidentEdgesOf2 = graph.GetIncidentEdges(2).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<object>> { new DirectionalEdge<object>(1, 2), new DirectionalEdge<object>(2, 3) }));
+            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<int>> { new DirectionalEdge<int>(1, 2), new DirectionalEdge<int>(2, 3) }));
         }
 
 
         [TestMethod]
         public void TestGetHashCode()
         {
-            DirectionalGraph<object> graph1 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph1 = new DirectionalGraph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            DirectionalGraph<object> graph2 = new DirectionalGraph<object>();
+            DirectionalGraph<int> graph2 = new DirectionalGraph<int>();
             graph2.AddEdge(1, 2);
             graph2.AddEdge(2, 3);
             Assert.AreEqual(graph1.GetHashCode(), graph2.GetHashCode());

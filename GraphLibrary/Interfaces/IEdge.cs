@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GraphLibrary.Interfaces
 {
-    public interface IEdge<T> : IEquatable<IEdge<T>> where T : notnull
+    public interface IEdge<T> : IEquatable<IEdge<T>> where T : IEquatable<T>
     {
         public T Vertex1 { get; }
         public T Vertex2 { get; }

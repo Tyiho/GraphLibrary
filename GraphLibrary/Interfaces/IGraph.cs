@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraphLibrary.Interfaces
 {
-    public interface IGraph<T> : IEquatable<IGraph<T>> where T : notnull
+    public interface IGraph<T> : IEquatable<IGraph<T>> where T : IEquatable<T>
     {
         HashSet<T> Vertices { get; }
         HashSet<IEdge<T>> Edges { get; }

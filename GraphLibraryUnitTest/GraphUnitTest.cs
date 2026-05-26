@@ -10,7 +10,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestGraphCreation()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -21,7 +21,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             Assert.IsTrue(graph.Vertices.Count == 0);
             graph.AddVertex(1);
             Assert.IsTrue(graph.Vertices.Count == 1);
@@ -35,22 +35,22 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddEdge()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             Assert.IsTrue(graph.Edges.Count == 0);
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.Edges.Count == 1);
-            Assert.IsTrue(graph.Edges.Contains(new Edge<object>(1, 2)));
-            Assert.IsFalse(graph.Edges.Contains(new Edge<object>(2, 3)));
+            Assert.IsTrue(graph.Edges.Contains(new Edge<int>(1, 2)));
+            Assert.IsFalse(graph.Edges.Contains(new Edge<int>(2, 3)));
             graph.AddEdge(2, 3);
-            Assert.IsTrue(graph.Edges.Contains(new Edge<object>(2, 3)));
+            Assert.IsTrue(graph.Edges.Contains(new Edge<int>(2, 3)));
             Assert.IsTrue(graph.Edges.Count == 2);
         }
 
         [TestMethod]
         public void TestAddVertices()
         {
-            Graph<object> graph = new Graph<object>();
-            List<object> verticesToAdd = new List<object>() { 1, 2, 3, 4, 5 };
+            Graph<int> graph = new Graph<int>();
+            List<int> verticesToAdd = new List<int>() { 1, 2, 3, 4, 5 };
             graph.AddVertices(verticesToAdd);
             Assert.AreEqual(5, graph.Vertices.Count);
             foreach (var vertex in verticesToAdd)
@@ -62,14 +62,14 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddEdges()
         {
-            Graph<object> graph = new Graph<object>();
-            List<Edge<object>> edgesToAdd = new List<Edge<object>>()
+            Graph<int> graph = new Graph<int>();
+            List<Edge<int>> edgesToAdd = new List<Edge<int>>()
             {
-                new Edge<object>(1, 2),
-                new Edge<object>(2, 3),
-                new Edge<object>(3, 1)
+                new Edge<int>(1, 2),
+                new Edge<int>(2, 3),
+                new Edge<int>(3, 1)
             };
-            List<IEdge<object>> edgesToAdd1 = edgesToAdd.Cast<IEdge<object>>().ToList();
+            List<IEdge<int>> edgesToAdd1 = edgesToAdd.Cast<IEdge<int>>().ToList();
             graph.AddEdges(edgesToAdd1);
             Assert.AreEqual(3, graph.Edges.Count);
             foreach (var edge in edgesToAdd)
@@ -81,10 +81,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestAddGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(3, 4);
             graph2.AddEdge(4, 5);
             graph2.AddEdge(1, 2); //duplicate edge to test that it is not added twice
@@ -96,19 +96,19 @@ namespace GraphLibraryUnitTest
             {
                 Assert.IsTrue(graph1.Vertices.Contains(i));
             }
-            Assert.IsTrue(graph1.Edges.Contains(new Edge<object>(1, 2)));
-            Assert.IsTrue(graph1.Edges.Contains(new Edge<object>(2, 3)));
-            Assert.IsTrue(graph1.Edges.Contains(new Edge<object>(3, 4)));
-            Assert.IsTrue(graph1.Edges.Contains(new Edge<object>(4, 5)));
+            Assert.IsTrue(graph1.Edges.Contains(new Edge<int>(1, 2)));
+            Assert.IsTrue(graph1.Edges.Contains(new Edge<int>(2, 3)));
+            Assert.IsTrue(graph1.Edges.Contains(new Edge<int>(3, 4)));
+            Assert.IsTrue(graph1.Edges.Contains(new Edge<int>(4, 5)));
         }
 
         [TestMethod]
         public void TestConnectGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(4, 5);
             graph2.AddEdge(5, 6);
 
@@ -119,14 +119,14 @@ namespace GraphLibraryUnitTest
 
             Assert.AreEqual(6, graph1.Vertices.Count);
             Assert.AreEqual(5, graph1.Edges.Count);
-            Assert.IsTrue(graph1.Edges.Contains(new Edge<object>(4, 3)));
+            Assert.IsTrue(graph1.Edges.Contains(new Edge<int>(4, 3)));
         }
 
 
         [TestMethod]
         public void TestContainsVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.ContainsVertex(1));
             Assert.IsTrue(graph.ContainsVertex(2));
@@ -136,21 +136,21 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContainsEdge()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.ContainsEdge(1, 2));
-            Assert.IsTrue(graph.ContainsEdge(new Edge<object>(1, 2)));
+            Assert.IsTrue(graph.ContainsEdge(new Edge<int>(1, 2)));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
-            Assert.IsFalse(graph.ContainsEdge(new Edge<object>(2, 3)));
+            Assert.IsFalse(graph.ContainsEdge(new Edge<int>(2, 3)));
         }
 
         [TestMethod]
         public void TestSubGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(1, 2);
             Assert.IsTrue(graph2.IsSubGraphOf(graph1));
             graph2.AddEdge(3, 4);
@@ -160,10 +160,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestSuperGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
 
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(1, 2);
             graph2.AddEdge(2, 3);
 
@@ -174,10 +174,10 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContainsGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(1, 2);
             Assert.IsTrue(graph1.ContainsGraph(graph2));
             graph2.AddEdge(3, 4);
@@ -189,7 +189,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestContains()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -198,12 +198,12 @@ namespace GraphLibraryUnitTest
             Assert.IsTrue(graph.Contains(2));
             Assert.IsTrue(graph.Contains(3));
             Assert.IsFalse(graph.Contains(4));
-            Assert.IsTrue(graph.Contains(new Edge<object>(1, 2)));
-            Assert.IsTrue(graph.Contains(new Edge<object>(2, 3)));
-            Assert.IsTrue(graph.Contains(new Edge<object>(3, 1)));
-            Assert.IsFalse(graph.Contains(new Edge<object>(1, 4)));
+            Assert.IsTrue(graph.Contains(new Edge<int>(1, 2)));
+            Assert.IsTrue(graph.Contains(new Edge<int>(2, 3)));
+            Assert.IsTrue(graph.Contains(new Edge<int>(3, 1)));
+            Assert.IsFalse(graph.Contains(new Edge<int>(1, 4)));
 
-            Graph<object> subGraph = new Graph<object>();
+            Graph<int> subGraph = new Graph<int>();
             subGraph.AddEdge(1, 2);
             Assert.IsTrue(graph.Contains(subGraph));
             subGraph.AddEdge(2, 4);
@@ -213,7 +213,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestDegree()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -225,22 +225,22 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestNeighbors()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
             var neighborsOf1 = graph.GetNeighbors(1).ToHashSet();
-            Assert.IsTrue(neighborsOf1.SetEquals(new HashSet<object> { 2, 3 }));
+            Assert.IsTrue(neighborsOf1.SetEquals(new HashSet<int> { 2, 3 }));
             var neighborsOf2 = graph.GetNeighbors(2).ToHashSet();
-            Assert.IsTrue(neighborsOf2.SetEquals(new HashSet<object> { 1, 3 }));
+            Assert.IsTrue(neighborsOf2.SetEquals(new HashSet<int> { 1, 3 }));
             var neighborsOf3 = graph.GetNeighbors(3).ToHashSet();
-            Assert.IsTrue(neighborsOf3.SetEquals(new HashSet<object> { 1, 2 }));
+            Assert.IsTrue(neighborsOf3.SetEquals(new HashSet<int> { 1, 2 }));
         }
 
         [TestMethod]
         public void TestRemoveVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             Assert.IsTrue(graph.ContainsVertex(2));
@@ -253,7 +253,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveEdge()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             Assert.IsTrue(graph.ContainsEdge(1, 2));
@@ -266,7 +266,7 @@ namespace GraphLibraryUnitTest
             graph.AddEdge(1, 2);
 
             Assert.IsTrue(graph.ContainsEdge(1, 2));
-            graph.RemoveEdge(new Edge<object>(2, 1));
+            graph.RemoveEdge(new Edge<int>(2, 1));
             Assert.IsFalse(graph.ContainsEdge(1, 2));
             Assert.IsTrue(graph.ContainsVertex(1));
             Assert.IsTrue(graph.ContainsVertex(2));
@@ -275,11 +275,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveVertices()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 4);
-            List<object> verticesToRemove = new List<object>() { 2, 3 };
+            List<int> verticesToRemove = new List<int>() { 2, 3 };
             graph.RemoveVertices(verticesToRemove);
             Assert.IsFalse(graph.ContainsVertex(2));
             Assert.IsFalse(graph.ContainsVertex(3));
@@ -294,16 +294,16 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveEdges()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 4);
-            List<Edge<object>> edgesToRemove = new List<Edge<object>>()
+            List<Edge<int>> edgesToRemove = new List<Edge<int>>()
             {
-                new Edge<object>(1, 2),
-                new Edge<object>(2, 3)
+                new Edge<int>(1, 2),
+                new Edge<int>(2, 3)
             };
-            List<IEdge<object>> edgesToRemove1 = edgesToRemove.Cast<IEdge<object>>().ToList();
+            List<IEdge<int>> edgesToRemove1 = edgesToRemove.Cast<IEdge<int>>().ToList();
             graph.RemoveEdges(edgesToRemove1);
             Assert.IsFalse(graph.ContainsEdge(1, 2));
             Assert.IsFalse(graph.ContainsEdge(2, 3));
@@ -317,11 +317,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestRemoveGraph()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 4);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(2, 3);
             graph2.AddEdge(3, 4);
 
@@ -338,11 +338,11 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestClear()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.Clear();
-            Assert.IsTrue(graph.isEmpty());
+            Assert.IsTrue(graph.IsEmpty());
             Assert.AreEqual(0, graph.Vertices.Count);
             Assert.AreEqual(0, graph.Edges.Count);
         }
@@ -351,16 +351,16 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestEquals()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 1);
 
-            Graph<object> graph2 = new Graph<object>(graph1);
+            Graph<int> graph2 = new Graph<int>(graph1);
 
             Assert.AreEqual(graph1, graph2);
 
-            graph2.AddEdge(4, "banana");
+            graph2.AddEdge(4, 5);
 
             Assert.AreNotEqual(graph1, graph2);
         }
@@ -368,33 +368,33 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestClone()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
             graph1.AddEdge(3, 1);
-            Graph<object> graph2 = graph1.Clone();
+            Graph<int> graph2 = graph1.Clone();
             Assert.AreEqual(graph1, graph2);
-            graph2.AddEdge(4, "banana");
+            graph2.AddEdge(4, 5);
             Assert.AreNotEqual(graph1, graph2);
         }
 
         [TestMethod]
         public void TestIsEmpty()
         {
-            Graph<object> graph = new Graph<object>();
-            Assert.IsTrue(graph.isEmpty());
+            Graph<int> graph = new Graph<int>();
+            Assert.IsTrue(graph.IsEmpty());
             graph.AddVertex(1);
-            Assert.IsFalse(graph.isEmpty());
+            Assert.IsFalse(graph.IsEmpty());
             graph.RemoveVertex(1);
-            Assert.IsTrue(graph.isEmpty());
+            Assert.IsTrue(graph.IsEmpty());
             graph.AddEdge(1, 2);
-            Assert.IsFalse(graph.isEmpty());
+            Assert.IsFalse(graph.IsEmpty());
         }
 
         [TestMethod]
         public void TestIsEndVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             Assert.IsTrue(graph.IsEndVertex(1));
             Assert.IsTrue(graph.IsEndVertex(2));
@@ -405,7 +405,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestIsIsolatedVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddVertex(1);
             Assert.IsTrue(graph.IsIsolatedVertex(1));
             graph.AddEdge(1, 2);
@@ -415,7 +415,7 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestIsUniversalVertex()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(1, 3);
             Assert.IsTrue(graph.IsUniversalVertex(1));
@@ -427,20 +427,20 @@ namespace GraphLibraryUnitTest
         [TestMethod]
         public void TestGetIncidentEdges()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(1, 3);
             graph.AddEdge(2, 3);
             var incidentEdgesOf1 = graph.GetIncidentEdges(1).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<object>> { new Edge<object>(1, 2), new Edge<object>(1, 3) }));
+            Assert.IsTrue(incidentEdgesOf1.SetEquals(new HashSet<IEdge<int>> { new Edge<int>(1, 2), new Edge<int>(1, 3) }));
             var incidentEdgesOf2 = graph.GetIncidentEdges(2).ToHashSet();
-            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<object>> { new Edge<object>(1, 2), new Edge<object>(2, 3) }));
+            Assert.IsTrue(incidentEdgesOf2.SetEquals(new HashSet<IEdge<int>> { new Edge<int>(1, 2), new Edge<int>(2, 3) }));
         }
 
         [TestMethod]
         public void TestGetCliques()
         {
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 1);
@@ -449,10 +449,10 @@ namespace GraphLibraryUnitTest
             graph.AddEdge(5, 3);
 
             var cliques = graph.GetCliques().ToList();
-            List<HashSet<object>> expectedCliques = new List<HashSet<object>>()
+            List<HashSet<int>> expectedCliques = new List<HashSet<int>>()
             {
-                new HashSet<object>() {1, 2, 3},
-                new HashSet<object>() {3, 4, 5}
+                new HashSet<int>() {1, 2, 3},
+                new HashSet<int>() {3, 4, 5}
             };
             Assert.AreEqual(expectedCliques.Count, cliques.Count);
             foreach (var expectedClique in expectedCliques)
@@ -460,7 +460,7 @@ namespace GraphLibraryUnitTest
                 Assert.IsTrue(cliques.Any(c => c.SetEquals(expectedClique)));
             }
 
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(1, 2);
             graph2.AddEdge(2, 3);
             graph2.AddEdge(3, 1);
@@ -471,12 +471,12 @@ namespace GraphLibraryUnitTest
             graph2.AddEdge(7, 5);
 
             var cliques2 = graph2.GetCliques().ToList();
-            List<HashSet<object>> expectedCliques2 = new List<HashSet<object>>()
+            List<HashSet<int>> expectedCliques2 = new List<HashSet<int>>()
             {
-                new HashSet<object>() {1, 2, 3 },
-                new HashSet<object>() {5, 6, 7 },
-                new HashSet<object>() {3, 4 },
-                new HashSet<object>() {4, 5 },
+                new HashSet<int>() {1, 2, 3 },
+                new HashSet<int>() {5, 6, 7 },
+                new HashSet<int>() {3, 4 },
+                new HashSet<int>() {4, 5 },
             };
             Trace.WriteLine(cliques2.First().Count);
 
@@ -493,7 +493,7 @@ namespace GraphLibraryUnitTest
         public void TestGetMaximalClique()
         {
             //building a 4-clique
-            Graph<object> graph = new Graph<object>();
+            Graph<int> graph = new Graph<int>();
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 3);
             graph.AddEdge(3, 4);
@@ -509,17 +509,17 @@ namespace GraphLibraryUnitTest
 
             var maximalClique = graph.GetMaximalClique();
             Assert.AreEqual(4, maximalClique.Count);
-            Assert.IsTrue(maximalClique.SetEquals(new HashSet<object>() { 1, 2, 3, 4 }));
+            Assert.IsTrue(maximalClique.SetEquals(new HashSet<int>() { 1, 2, 3, 4 }));
         }
 
 
         [TestMethod]
         public void TestGetHashCode()
         {
-            Graph<object> graph1 = new Graph<object>();
+            Graph<int> graph1 = new Graph<int>();
             graph1.AddEdge(1, 2);
             graph1.AddEdge(2, 3);
-            Graph<object> graph2 = new Graph<object>();
+            Graph<int> graph2 = new Graph<int>();
             graph2.AddEdge(1, 2);
             graph2.AddEdge(2, 3);
             Assert.AreEqual(graph1.GetHashCode(), graph2.GetHashCode());
