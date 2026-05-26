@@ -138,19 +138,7 @@ public struct Graph<T> : IGraph<T>, IEquatable<Graph<T>> where T : IEquatable<T>
 
     public readonly IEnumerable<T> GetNeighbors(T vertex)
     {
-        var neighbors = new HashSet<T>();
-        foreach (var edge in GetIncidentEdges(vertex))
-        {
-            if (edge.Vertex1.Equals(vertex))
-            {
-                neighbors.Add(edge.Vertex2);
-            }
-            else
-            {
-                neighbors.Add(edge.Vertex1);
-            }
-        }
-        return neighbors;
+        return GetIncidentEdges(vertex).Select(edge => edge.Vertex1.Equals(vertex) ? edge.Vertex2 : edge.Vertex1);
     }
 
     public readonly int Degree(T vertex)

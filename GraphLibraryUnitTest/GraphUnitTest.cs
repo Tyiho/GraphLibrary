@@ -526,5 +526,27 @@ namespace GraphLibraryUnitTest
             graph2.AddEdge(3, 4);
             Assert.AreNotEqual(graph1.GetHashCode(), graph2.GetHashCode());
         }
+
+        [TestMethod]
+        public void TestGetNeighbors()
+        {
+            Graph<int> graph = new Graph<int>();
+            graph.AddEdge(1, 2);
+            graph.AddEdge(1, 3);
+            graph.AddEdge(2, 3);
+            var neighborsOf1 = graph.GetNeighbors(1);
+            Assert.IsTrue(neighborsOf1.ToHashSet().SetEquals(new HashSet<int> { 2, 3 }));
+        }
+
+        [TestMethod]
+        public void TestGetNeighborsWithLoop()
+        {
+            Graph<int> graph = new Graph<int>();
+            graph.AddEdge(1, 2);
+            graph.AddEdge(1, 3);
+            graph.AddEdge(2, 3);
+            var neighborsOf1 = graph.GetNeighborsWithLoop(1);
+            Assert.IsTrue(neighborsOf1.ToHashSet().SetEquals(new HashSet<int> { 2, 3 }));
+        }
     }
 }
